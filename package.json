@@ -1,0 +1,15 @@
+{
+  "name": "addin",
+  "version": "1.0.0",
+  "main": "taskpane.js",
+  "scripts": {
+    "validate": "validate-office-addin ./manifest.xml"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "fast-xml-parser": "^5.2.0"
+  }
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meeting Options</title>
+
+  <!-- Office.js (Required for Outlook Add-ins) -->
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+  <!-- Custom CSS (Optional) -->
+  <link rel="stylesheet" href="taskpane.css" />
+
+  <!-- Taskpane Script -->
+  <script defer src="taskpane.js"></script>
+</head>
+<body>
+  <h2>Customize Meeting Options</h2>
+
+  <!-- Meeting Type Selection -->
+  <label for="meetingType">Select Meeting Type:</label>
+  <select id="meetingType">
+    <option value="Standup">Standup</option>
+    <option value="Team Meeting">Team Meeting</option>
+    <option value="Client Call">Client Call</option>
+  </select>
+
+  <br><br>
+
+  <!-- Enable MOM (Minutes of Meeting) -->
+  <label>MOM Enable</label><br>
+  <div class="wrap">
+    <div class="option">
+      <input type="radio" id="enableMomYes" name="enableMom" value="Yes" checked />
+      <label for="enableMomYes">Yes</label>
+    </div>
+    <div class="option">
+      <input type="radio" id="enableMomNo" name="enableMom" value="No" />
+      <label for="enableMomNo">No</label>
+    </div>
+  </div>
+
+  <br><br>
+
+  <!-- Status Messages -->
+  <div id="alerts"></div>
+</body>
+</html>
+
+
+
