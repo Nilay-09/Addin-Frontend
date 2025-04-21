@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Silent Send</title>
+  
+  <!-- Office.js reference -->
+  <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  
+  <!-- Include taskpane.js to get data -->
+  <script type="text/javascript" src="taskpane.js"></script>
+  
+  <script type="text/javascript">
+    Office.onReady(function() {
+      // Get and send meeting data
+      if (window.getMeetingDataAndSend) {
+        window.getMeetingDataAndSend();
+      }
+      
+      // Signal the dialog frame that we're done
+      setTimeout(function() {
+        Office.context.ui.messageParent("SEND_DONE");
+      }, 1000);
+    });
+  </script>
+</head>
+<body style="display:none">
+  <!-- Hidden elements that match the taskpane.html form structure -->
+  <select id="meetingType">
+    <option value="Standup">Standup</option>
+    <option value="Review">Review</option>
+    <option value="Planning">Planning</option>
+    <option value="Other">Other</option>
+  </select>
+  
+  <div>
+    <input type="radio" name="enableMom" value="Yes" checked>
+    <input type="radio" name="enableMom" value="No">
+  </div>
+</body>
+</html>

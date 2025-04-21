@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Add-in Functions</title>
+  
+  <!-- Office.js reference -->
+  <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  
+  <script type="text/javascript">
+    // Initialize Office
+    Office.onReady(function(info) {
+      console.log("Functions.html: Office.onReady", info);
+    });
+    
+    // Called when a new message or appointment is created
+    function onNewItem(event) {
+      console.log("New item created", event);
+      
+      // Initialize add-in for this item silently
+      Office.context.ui.displayDialogAsync(
+        'https://addin.innovationalofficesolution.com/silent-init.html',
+        {height: 1, width: 1, displayInIframe: true},
+        function(result) {
+          if (result.status === Office.AsyncResultStatus.Succeeded) {
+            const dialog = result.value;
+            dialog.addEventHandler(Office.EventType.DialogMessageReceived, function() {
+              dialog.close();
+              event.completed();
+            });
+            
+            // Auto-close after 3 seconds in case we don't get a message
+            setTimeout(function() {
+              try {
+                dialog.close();
+                event.completed();
+              } catch (e) {
+                // Dialog may already be closed
+              }
+            }, 3000);
+          } else {
+            // If dialog fails, just complete the event
+            console.error("Failed to open silent init dialog", result.error);
+            event.completed();
+          }
+        }
+      );
+    }
+    
+    // Called when a message or appointment is being sent
+    function onSending(event) {
+      console.log("Item being sent", event);
+      
+      // Get meeting data from taskpane.js if it's loaded
+      if (window.getMeetingDataAndSend) {
+        window.getMeetingDataAndSend();
+        event.completed({allowEvent: true});
+        return;
+      }
+      
+      // If taskpane.js isn't loaded, load it in a dialog
+      Office.context.ui.displayDialogAsync(
+        'https://addin.innovationalofficesolution.com/silent-send.html',
+        {height: 1, width: 1, displayInIframe: true},
+        function(result) {
+          if (result.status === Office.AsyncResultStatus.Succeeded) {
+            const dialog = result.value;
+            dialog.addEventHandler(Office.EventType.DialogMessageReceived, function() {
+              dialog.close();
+              event.completed({allowEvent: true});
+            });
+            
+            // Auto-close after 2 seconds in case we don't get a message
+            setTimeout(function() {
+              try {
+                dialog.close();
+                event.completed({allowEvent: true});
+              } catch (e) {
+                // Dialog may already be closed
+              }
+            }, 2000);
+          } else {
+            // If dialog fails, just allow the send
+            console.error("Failed to open silent send dialog", result.error);
+            event.completed({allowEvent: true});
+          }
+        }
+      );
+    }
+  </script>
+</head>
+<body>
+  <!-- This page is never displayed to the user -->
+</body>
+</html>
