@@ -13,30 +13,49 @@
 
   <!-- Taskpane Script -->
   <script defer src="taskpane.js"></script>
+
+
 </head>
 <body>
   <h2>Customize Meeting Options</h2>
 
   <!-- Meeting Type Selection -->
-  <label for="meetingType">Select Meeting Type:</label>
+  <label for="meetingType">Select Meeting Type</label>
+  <div class="select-wrapper"> 
   <select id="meetingType">
-    <option value="Standup">Standup</option>
-    <option value="Team Meeting">Team Meeting</option>
-    <option value="Client Call">Client Call</option>
-  </select>
+  <option value="Undefined" selected>Undefined</option>
+  <option value="CFT">CFT</option>
+  <option value="CMD_ED_Review">CMD / ED Review</option>
+  <option value="MCM">MCM</option>
+  <option value="Departmental">Departmental</option>
+  <option value="Pricing_Policy">Pricing / Policy</option>
+  <option value="S&amp;OP">S&amp;OP</option>
+  <option value="Compliance_Audit">Compliance / Audit</option>
+  <option value="Adhoc">Adhoc</option>
+  <option value="TPM">TPM</option>
+  <option value="EHS">EHS</option>
+  <option value="Interview_Training">Interview / Training</option>
+  <option value="External">External</option>
+  <option value="Other">Other</option>
 
-  <br><br>
+  </select>
+</div>
+  
 
   <!-- Enable MOM (Minutes of Meeting) -->
-  <label>MOM Enable</label><br>
+  <label>Minutes Required </label>
   <div class="wrap">
     <div class="option">
       <input type="radio" id="enableMomYes" name="enableMom" value="Yes" checked />
-      <label for="enableMomYes">Yes</label>
+      <label class="optionlabel"  for="enableMomYes">
+      <span class="custom-radio"></span> Yes
+      </label>
     </div>
     <div class="option">
       <input type="radio" id="enableMomNo" name="enableMom" value="No" />
-      <label for="enableMomNo">No</label>
+      <label  class="optionlabel" for="enableMomNo">
+      <span class="custom-radio"></span>No
+      </label>
     </div>
   </div>
 
@@ -44,8 +63,6 @@
 
   <!-- Status Messages -->
   <div id="alerts"></div>
+
 </body>
 </html>
-
-
-

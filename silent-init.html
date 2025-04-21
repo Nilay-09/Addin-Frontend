@@ -12,10 +12,39 @@
   
   <script type="text/javascript">
     Office.onReady(function() {
-      // Signal the dialog frame that we're done initializing
-      setTimeout(function() {
-        Office.context.ui.messageParent("INIT_DONE");
-      }, 1000);
+      console.log("Silent init: Office is ready");
+      
+      try {
+        // Ensure we initialize the add-in
+        if (window.initializeAddin) {
+          window.initializeAddin(true); // Force initialization
+          
+          // Set a timeout to ensure data is loaded
+          setTimeout(function() {
+            try {
+              // Signal the dialog frame that we're done initializing
+              Office.context.ui.messageParent("INIT_DONE");
+            } catch (e) {
+              console.error("Error sending message to parent:", e);
+            }
+          }, 1000);
+        } else {
+          console.error("initializeAddin function not available");
+          // Try to signal completion anyway
+          try {
+            Office.context.ui.messageParent("INIT_FAILED");
+          } catch (e) {
+            console.error("Error sending failure message to parent:", e);
+          }
+        }
+      } catch (e) {
+        console.error("Error in silent init:", e);
+        try {
+          Office.context.ui.messageParent("INIT_ERROR");
+        } catch (dialogErr) {
+          console.error("Error sending error message to parent:", dialogErr);
+        }
+      }
     });
   </script>
 </head>
@@ -23,14 +52,13 @@
   <!-- Hidden elements that match the taskpane.html form structure -->
   <select id="meetingType">
     <option value="Standup">Standup</option>
-    <option value="Review">Review</option>
-    <option value="Planning">Planning</option>
-    <option value="Other">Other</option>
+    <option value="Team Meeting">Team Meeting</option>
+    <option value="Client Call">Client Call</option>
   </select>
   
   <div>
-    <input type="radio" name="enableMom" value="Yes" checked>
-    <input type="radio" name="enableMom" value="No">
+    <input type="radio" id="enableMomYes" name="enableMom" value="Yes" checked>
+    <input type="radio" id="enableMomNo" name="enableMom" value="No">
   </div>
 </body>
 </html>

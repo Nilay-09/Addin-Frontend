@@ -1,10 +1,13 @@
+
+// taskpane.js - Merged implementation combining correct state management and reliable API calls
+
 // Initialize meeting data with default values
 let meetingData = {
   subject: "Unavailable",
   body: "Unavailable",
   organizer: "Unavailable",
-  meetingType: "Standup", // Default value
-  enableMom: "Yes",      // Default value
+  meetingType: "Standup",
+  enableMom: "Yes",
   startTime: "Unavailable",
   endTime: "Unavailable",
   location: "",
@@ -13,345 +16,225 @@ let meetingData = {
   attendees: []
 };
 
-// Make meetingData available in global scope
+// Expose meetingData globally
 window.meetingData = meetingData;
-
-// This flag ensures we only initialize once per page load
 let isInitialized = false;
+let dataLoadedPromise = null;
 
-// Create a promise to track when Office is ready and initial values are fetched
-Office.onReady(function(info) {
+// Office add-in entry point
+Office.onReady(info => {
   console.log("📝 Office.onReady info:", info);
-  
   if (info.host === Office.HostType.Outlook) {
-    console.log("✅ Outlook Add-in initialized");
-    
-    if (!isInitialized) {
-      isInitialized = true;
-      initializeAddin();
-    }
+    initializeAddin();
   }
 });
 
-// Initialize the add-in - called once when Office is ready
-function initializeAddin() {
-  const item = Office.context.mailbox.item;
-  meetingData.organizer = Office.context.mailbox.userProfile.emailAddress || "Unavailable";
-  console.log("👤 Organizer:", meetingData.organizer);
-  
-  // Load any previously saved custom properties
-  loadSavedProperties();
-  
-  // Get real-time data
-  loadItemData();
-  
-  // Set up UI listeners for the form if we're in the taskpane
-  setupUIListeners();
-  
-  // Update data every 2 seconds while active
-  setInterval(loadItemData, 2000);
-  
-  // Reset sessionStorage flag for sending data
+// Initialize or re-initialize the add-in
+function initializeAddin(force = false) {
+  if (isInitialized && !force) {
+    console.log("📝 Already initialized, skipping");
+    return;
+  }
+  console.log(`📝 Initializing add-in${force ? ' (forced)' : ''}`);
+  isInitialized = true;
+  // Reset send flag each session
   sessionStorage.removeItem("hasSentData");
-  
-  // Handle window unload (when taskpane closes)
-  window.addEventListener("unload", handleUnload);
+
+  // Set organizer
+  meetingData.organizer = Office.context.mailbox.userProfile.emailAddress || "Unavailable";
+
+  // Load saved properties then live item data
+  dataLoadedPromise = loadSavedProperties()
+    .then(loadItemData)
+    .then(updateUIFromData);
+
+  // Setup UI listeners
+  setupUIListeners();
 }
 
-// Load any previously saved custom properties
+// Load persisted form selections
 function loadSavedProperties() {
-  const item = Office.context.mailbox.item;
-  
-  item.loadCustomPropertiesAsync((result) => {
-    if (result.status !== Office.AsyncResultStatus.Succeeded) {
-      console.warn("⚠️ Failed to load custom properties:", result.error.message);
-      return;
-    }
-    
-    const props = result.value;
-    const savedData = props.get("meetingFormData");
-    
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        console.log("📤 Loaded saved properties:", parsedData);
-        
-        // Update meetingData with saved values
-        meetingData.meetingType = parsedData.meetingType || "Standup";
-        meetingData.enableMom = parsedData.enableMom || "Yes";
-        
-        // Update UI if possible
-        updateUIFromData();
-      } catch (e) {
-        console.error("❌ Error parsing saved properties:", e);
+  return new Promise(resolve => {
+    Office.context.mailbox.item.loadCustomPropertiesAsync(res => {
+      if (res.status === Office.AsyncResultStatus.Succeeded) {
+        const saved = res.value.get("meetingFormData");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            meetingData.meetingType = parsed.meetingType || meetingData.meetingType;
+            meetingData.enableMom = parsed.enableMom || meetingData.enableMom;
+            console.log("📤 Loaded saved selections:", parsed);
+          } catch (e) {
+            console.error("Error parsing savedProperties", e);
+          }
+        }
       }
-    } else {
-      console.log("ℹ️ No saved properties found, using defaults");
-    }
-  });
-}
-
-// Save meeting form selections to custom properties
-function saveFormData() {
-  const item = Office.context.mailbox.item;
-  
-  item.loadCustomPropertiesAsync((result) => {
-    if (result.status !== Office.AsyncResultStatus.Succeeded) {
-      console.warn("⚠️ Failed to load custom properties for saving:", result.error.message);
-      return;
-    }
-    
-    const props = result.value;
-    const dataToSave = {
-      meetingType: meetingData.meetingType,
-      enableMom: meetingData.enableMom
-    };
-    
-    props.set("meetingFormData", JSON.stringify(dataToSave));
-    
-    props.saveAsync((saveResult) => {
-      if (saveResult.status === Office.AsyncResultStatus.Succeeded) {
-        console.log("✅ Form data saved to custom properties");
-      } else {
-        console.warn("⚠️ Failed to save form data:", saveResult.error.message);
-      }
+      resolve();
     });
   });
 }
 
-// Set up UI event listeners if the form elements exist
+// Persist current form selections
+function saveFormData() {
+  Office.context.mailbox.item.loadCustomPropertiesAsync(res => {
+    if (res.status === Office.AsyncResultStatus.Succeeded) {
+      const props = res.value;
+      props.set("meetingFormData", JSON.stringify({
+        meetingType: meetingData.meetingType,
+        enableMom: meetingData.enableMom
+      }));
+      props.saveAsync(saveRes => console.log(
+        saveRes.status === Office.AsyncResultStatus.Succeeded ?
+          "✅ Form data saved" :
+          `⚠️ Failed to save (${saveRes.error.message})`
+      ));
+    }
+  });
+}
+
+// Attach UI listeners once
 function setupUIListeners() {
-  const meetingTypeElem = document.getElementById("meetingType");
-  const momOptions = document.querySelectorAll('input[name="enableMom"]');
-  
-  // Set up meeting type dropdown listener
-  if (meetingTypeElem) {
-    // First set the UI to match our data
-    meetingTypeElem.value = meetingData.meetingType;
-    
-    // Then add the change listener
-    meetingTypeElem.addEventListener("change", () => {
-      meetingData.meetingType = meetingTypeElem.value;
-      console.log("🔄 Meeting Type changed:", meetingData.meetingType);
+  const mt = document.getElementById("meetingType");
+  if (mt && !mt._listener) {
+    mt._listener = true;
+    // Initialize dropdown value
+    mt.value = meetingData.meetingType;
+    mt.addEventListener("change", () => {
+      meetingData.meetingType = mt.value;
+      console.log("🔄 Meeting Type:", mt.value);
       saveFormData();
     });
   }
-  
-  // Set up MOM radio button listeners
-  if (momOptions.length > 0) {
-    // First set the UI to match our data
-    momOptions.forEach((option) => {
-      if (option.value === meetingData.enableMom) {
-        option.checked = true;
-      }
-    });
-    
-    // Then add change listeners
-    momOptions.forEach((option) => {
-      option.addEventListener("change", () => {
-        if (option.checked) {
-          meetingData.enableMom = option.value;
-          console.log("🔄 Enable MOM changed:", meetingData.enableMom);
+  document.querySelectorAll('input[name="enableMom"]').forEach(opt => {
+    if (!opt._listener) {
+      opt._listener = true;
+      if (opt.value === meetingData.enableMom) opt.checked = true;
+      opt.addEventListener("change", () => {
+        if (opt.checked) {
+          meetingData.enableMom = opt.value;
+          console.log("🔄 Enable MOM:", opt.value);
           saveFormData();
         }
       });
-    });
-  }
+    }
+  });
 }
 
-// Update UI elements with current data values (if they exist)
+// Update form inputs from meetingData
 function updateUIFromData() {
-  const meetingTypeElem = document.getElementById("meetingType");
-  const momOptions = document.querySelectorAll('input[name="enableMom"]');
-  
-  if (meetingTypeElem) {
-    meetingTypeElem.value = meetingData.meetingType;
+  const mt = document.getElementById("meetingType");
+  if (mt) {
+    const optionExists = Array.from(mt.options).some(o => o.value === meetingData.meetingType);
+    mt.value = optionExists ? meetingData.meetingType : mt.options[0].value;
+    if (!optionExists) {
+      meetingData.meetingType = mt.value;
+      saveFormData();
+    }
   }
-  
-  if (momOptions.length > 0) {
-    momOptions.forEach((option) => {
-      if (option.value === meetingData.enableMom) {
-        option.checked = true;
-      }
-    });
-  }
+  document.querySelectorAll('input[name="enableMom"]').forEach(opt => {
+    opt.checked = (opt.value === meetingData.enableMom);
+  });
 }
 
-// Load item data from the current Outlook item
+// Load live item details
 function loadItemData() {
-  const item = Office.context.mailbox.item;
-  if (!item) return;
-  
-  // Get subject
-  item.subject.getAsync((res) => {
-    if (res.status === Office.AsyncResultStatus.Succeeded) {
-      meetingData.subject = res.value || "Unavailable";
-    }
-  });
-  
-  // Get body
-  item.body.getAsync(Office.CoercionType.Text, (res) => {
-    if (res.status === Office.AsyncResultStatus.Succeeded) {
-      meetingData.body = res.value || "Unavailable";
-    }
-  });
-  
-  // Get start time
-  if (item.start) {
-    item.start.getAsync((res) => {
-      if (res.status === Office.AsyncResultStatus.Succeeded && res.value) {
-        const localStart = new Date(res.value);
-        if (!isNaN(localStart)) {
-          meetingData.startTime = formatDateForMySQL(localStart);
-        }
-      }
-    });
-  }
-  
-  // Get end time
-  if (item.end) {
-    item.end.getAsync((res) => {
-      if (res.status === Office.AsyncResultStatus.Succeeded && res.value) {
-        const localEnd = new Date(res.value);
-        if (!isNaN(localEnd)) {
-          meetingData.endTime = formatDateForMySQL(localEnd);
-        }
-      }
-    });
-  }
-  
-  // Get location
-  if (item.location) {
-    item.location.getAsync((res) => {
-      if (res.status === Office.AsyncResultStatus.Succeeded) {
-        meetingData.location = res.value || "";
-      }
-    });
-  }
-  
-  // For online meetings, try to get the join URL
-  if (typeof item.isOnlineMeeting !== 'undefined') {
-    meetingData.isOnlineMeeting = item.isOnlineMeeting;
-    
-    if (item.meetingUrl) {
-      meetingData.join_url = item.meetingUrl || "";
-    }
-  }
-  
-  // Try to get attendees if available
-  if (item.requiredAttendees) {
-    item.requiredAttendees.getAsync((res) => {
-      if (res.status === Office.AsyncResultStatus.Succeeded && res.value) {
-        meetingData.attendees = res.value.map(attendee => attendee.emailAddress) || [];
-      }
-    });
-  }
-}
-
-// Handle window unload event (when taskpane closes)
-function handleUnload() {
-  console.log("🚪 Taskpane unloading, checking if we need to send data");
-  sendMeetingData();
-}
-
-// Send meeting data to the API
-function sendMeetingData() {
-  if (sessionStorage.getItem("hasSentData") === "true") {
-    console.log("🔄 Data was already sent this session, skipping");
-    return;
-  }
-  
-  sessionStorage.setItem("hasSentData", "true");
-  
-  try {
+  return new Promise(resolve => {
     const item = Office.context.mailbox.item;
-    
-    // Always refresh key data before sending
-    const requestData = {
-      organizer: meetingData.organizer,
-      organizer_email: meetingData.organizer,
-      subject: meetingData.subject || "",
-      start: meetingData.startTime || "Unavailable",
-      end: meetingData.endTime || "Unavailable",
-      meeting_type: meetingData.meetingType || "Standup",
-      enable_mom: meetingData.enableMom || "Yes",
-      preview: meetingData.body || "",
-      location: meetingData.location || "",
-      isOnlineMeeting: meetingData.isOnlineMeeting || false,
-      join_url: meetingData.join_url || "",
-      attendees: meetingData.attendees || []
-    };
-    
-    console.log("📤 Sending meeting data:", requestData);
-    
-    // Use sendBeacon for more reliable delivery during page unload
-    const beaconSent = navigator.sendBeacon(
-      "https://add-in-gvbvabchhdf6h3ez.centralindia-01.azurewebsites.net/save-meeting/",
-      new Blob([JSON.stringify(requestData)], { type: "application/json" })
-    );
-    
-    if (beaconSent) {
-      console.log("✅ Data sent successfully via beacon");
-    } else {
-      console.warn("⚠️ Failed to send data via beacon");
-      
-      // Fallback to fetch API if sendBeacon fails
-      fetch("https://add-in-gvbvabchhdf6h3ez.centralindia-01.azurewebsites.net/save-meeting/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestData),
-        keepalive: true
-      })
-      .then(response => {
-        console.log("✅ Data sent successfully via fetch", response.status);
-      })
-      .catch(error => {
-        console.error("❌ Error sending data via fetch:", error);
+    if (!item) return resolve();
+    let pending = 0;
+    const done = () => (--pending === 0) && resolve();
+    const track = () => { pending++; return done; };
+
+    track(); item.subject.getAsync(r => { meetingData.subject = r.value || meetingData.subject; done(); });
+    track(); item.body.getAsync(Office.CoercionType.Text, r => { meetingData.body = r.value || meetingData.body; done(); });
+    if (item.start) { track(); item.start.getAsync(r => { meetingData.startTime = formatDate(r.value); done(); }); }
+    if (item.end)   { track(); item.end.getAsync(r => { meetingData.endTime = formatDate(r.value); done(); }); }
+    if (item.location) { track(); item.location.getAsync(r => { meetingData.location = r.value; done(); }); }
+    meetingData.isOnlineMeeting = item.isOnlineMeeting || false;
+    meetingData.join_url = item.meetingUrl || meetingData.join_url;
+    if (item.requiredAttendees) {
+      track(); item.requiredAttendees.getAsync(r => {
+        meetingData.attendees = r.value.map(a => a.emailAddress);
+        done();
       });
     }
-  } catch (err) {
-    console.error("❌ Error in sendMeetingData:", err);
-  }
+    if (pending === 0) resolve();
+  });
 }
 
-// Format date to ISO 8601 format (with timezone offset)
-function formatDateForMySQL(date) {
-  const pad = (n) => (n < 10 ? '0' + n : n);
-  
-  // Get timezone offset in minutes and convert it to hours and minutes
-  const timezoneOffset = date.getTimezoneOffset();
-  const offsetHours = String(Math.floor(Math.abs(timezoneOffset) / 60)).padStart(2, '0');
-  const offsetMinutes = String(Math.abs(timezoneOffset) % 60).padStart(2, '0');
-  const offsetSign = timezoneOffset > 0 ? '-' : '+';
-  
-  // Format date as "YYYY-MM-DDTHH:mm:ss+/-HH:mm"
-  return (
-    date.getFullYear() + '-' +
-    pad(date.getMonth() + 1) + '-' +
-    pad(date.getDate()) + 'T' +
-    pad(date.getHours()) + ':' +
-    pad(date.getMinutes()) + ':' +
-    pad(date.getSeconds()) +
-    offsetSign + offsetHours + ':' + offsetMinutes
-  );
+// Send meeting data to the API, with beacon + fetch fallback and session control
+function sendMeetingData(forceRefresh = false) {
+  if (!forceRefresh && sessionStorage.getItem("hasSentData") === "true") {
+    console.log("🔄 Data already sent this session, skipping");
+    return Promise.resolve();
+  }
+  sessionStorage.setItem("hasSentData", "true");
+
+  const url = "https://add-in-gvbvabchhdf6h3ez.centralindia-01.azurewebsites.net/save-meeting/";
+  const payload = {
+    organizer:       meetingData.organizer,
+    organizer_email: meetingData.organizer,
+    subject:         meetingData.subject,
+    start:           meetingData.startTime,
+    end:             meetingData.endTime,
+    meeting_type:    meetingData.meetingType,
+    enable_mom:      meetingData.enableMom,
+    preview:         meetingData.body,
+    location:        meetingData.location,
+    isOnlineMeeting: meetingData.isOnlineMeeting,
+    join_url:        meetingData.join_url,
+    attendees:       meetingData.attendees
+  };
+
+  const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+  const doSend = () => {
+    const beaconOk = navigator.sendBeacon(url, blob);
+    if (beaconOk) {
+      console.log("✅ Data queued via sendBeacon");
+      return Promise.resolve();
+    }
+    console.warn("⚠️ sendBeacon failed, using fetch fallback");
+    return fetch(url, {
+      method:      'POST',
+      mode:        'cors',
+      credentials: 'omit',
+      headers:     { 'Content-Type': 'application/json' },
+      body:        JSON.stringify(payload),
+      keepalive:   true
+    })
+    .then(res => console.log("✅ Fallback fetch status", res.status))
+    .catch(err => console.error("❌ Fetch fallback error", err));
+  };
+
+  if (forceRefresh) {
+    return loadItemData().then(doSend);
+  }
+  return doSend();
 }
 
-// Expose function for event handlers in functions.html to access
-window.getMeetingDataAndSend = function() {
-  // Make sure we're initialized
-  if (!isInitialized) {
-    initializeAddin();
-  }
-  
-  // Make sure we have the latest data
-  loadItemData();
-  
-  // Set a small timeout to ensure we've loaded the latest data
-  setTimeout(() => {
-    sendMeetingData();
-  }, 500);
-  
-  return true;
+// Trigger save on pane close
+window.addEventListener('beforeunload', () => sendMeetingData(true));
+window.addEventListener('unload',        () => sendMeetingData(true));
+
+// Expose for event-based triggers
+window.getMeetingDataAndSend = function(force = false) {
+  if (!isInitialized || force) initializeAddin(force);
+  const ready = dataLoadedPromise || Promise.resolve();
+  return ready.then(() => sendMeetingData(true));
 };
+
+// Helper to format dates to ISO 8601 with timezone
+function formatDate(raw) {
+  const d = new Date(raw);
+  const pad = n => n < 10 ? '0'+n : n;
+  const tz = d.getTimezoneOffset();
+  const sign = tz > 0 ? '-' : '+';
+  const hh = String(Math.floor(Math.abs(tz)/60)).padStart(2,'0');
+  const mm = String(Math.abs(tz)%60).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}` +
+         `T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}` +
+         `${sign}${hh}:${mm}`;
+}
+
+// Make initializeAddin globally accessible
+window.initializeAddin = initializeAddin;
