@@ -12,8 +12,8 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="MMT"/>
   <Description DefaultValue="A template to get started."/>
-  <IconUrl DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
-  <HighResolutionIconUrl DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+  <IconUrl DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl128.png"/>
   <SupportUrl DefaultValue="https://www.dfpcl.com/"/>
   
   <AppDomains>
