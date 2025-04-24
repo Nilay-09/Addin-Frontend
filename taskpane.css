@@ -1,0 +1,176 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styles */
+body {
+      font-family: "Segoe UI Web (West European)", Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
+    background-color: #fffefe; /* Light gray background */
+    padding: 10px 20px 20px 35px;
+    color: #4A4A4A; /* Dark gray text */
+}
+
+/* Header Style */
+h2 {
+    font-size: 16px;
+    margin-bottom:12px;
+    color: #225D6B; /* Dark teal for header */
+    
+}
+
+.ms-Button--icon{
+       display: none !important; 
+}
+
+.ms-Button .ms-Button--icon{
+  display: none !important;   
+    
+}
+
+.ms-Button-flexContainer {
+    display: none !important;
+}
+
+
+/* Label Style */
+label {
+    font-size: 13px;
+    margin-bottom: 7px;
+    display: block;
+    font-weight: 400;
+    color:#0A0A0A; /* Dark blue-gray for labels */
+}
+.optionlabel{
+    color:#1E1E1E !important;
+}
+
+/* Select and Radio Button Style */
+/*select, input[type="radio"] {*/
+/*    margin-top: 5px;*/
+/*    margin-bottom: 15px;*/
+/*}*/
+
+   .select-wrapper{
+    margin-bottom:12px;
+    position: relative;
+    width:170px;
+}
+
+.select-wrapper::after {
+  content: "\25be" ; /* Unicode down arrow */
+  
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color:#000000 ;
+  pointer-events: none; /* So arrow doesn't block clicks */
+  font-size: 20px;
+  
+}
+
+.select-wrapper select {
+  padding: 8px;
+  padding-right: 32px; /* Leave space for the arrow */
+  width: 100%;
+  border: 1px solid #225D6B;
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  color: #4A4A4A;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Select Box */
+
+
+
+select {
+  padding: 8px;
+  padding-right: 32px; /* Pushes text to the left, exposing more arrow space */
+  width: 170px;
+  border: 1px solid #087F8C; /* Teal border */
+  border-radius: 4px;
+  background-color: #FFFFFF; /* White background */
+  color: #4A4A4A; /* Text color */
+  appearance: none;           /* Hide default arrow */
+  -webkit-appearance: none;   /* Safari */
+  -moz-appearance: none;      /* Firefox */
+  position: relative;
+}
+
+
+/* Radio Button Style */
+/* Hide the default radio */
+input[type="radio"] {
+  display: none;
+}
+
+/* Label styling */
+.optionlabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  user-select: none;
+}
+
+/* Outer circle */
+.custom-radio {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #0060644D;
+  border-radius: 50%;
+  position: relative;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* Inner dot when selected */
+input[type="radio"]:checked + label .custom-radio::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: #034C4F;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+
+/* Additional Space Between Elements */
+br {
+    margin-bottom: 10px;
+}
+
+/* Footer */
+footer {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #878787; /* Light gray text for footer */
+    text-align: center;
+}
+
+.abhishek{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.wrap{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+.option{
+   display: flex;
+    gap: 10px;
+    align-items: center;  
+}
