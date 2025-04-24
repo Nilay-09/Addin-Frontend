@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp 
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" 
+  xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" 
+  xsi:type="MailApp">
+  
+  <Id>0e071610-8222-42c9-87b2-a8a783632adb</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>innovationalofficesolution</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Meeting Management Tool" />
+  <Description DefaultValue="A tool to manage meeting options and settings in Outlook." />
+  <IconUrl DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl128.png"/>
+  <SupportUrl DefaultValue="https://www.innovationalofficesolution.com"/>
+  
+  <AppDomains>
+    <AppDomain>https://addin.innovationalofficesolution.com</AppDomain>
+  </AppDomains>
+  
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+  
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://addin.innovationalofficesolution.com/taskpane.html"/>
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+  
+  <Permissions>ReadWriteItem</Permissions>
+  
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+    <Rule xsi:type="ItemIs" ItemType="Appointment" FormType="Read"/>
+  </Rule>
+  
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+
+  <!-- First use VersionOverrides v1.0 -->
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Requirements>
+      <bt:Sets>
+        <bt:Set Name="Mailbox" MinVersion="1.5" />
+      </bt:Sets>
+    </Requirements>
+    
+    <Hosts>
+      <Host xsi:type="MailHost">
+        <DesktopFormFactor>
+          <FunctionFile resid="Functions.Url"/>
+          
+          <!-- Command surface for appointments -->
+          <ExtensionPoint xsi:type="AppointmentOrganizerCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="appointmentGroup">
+                <Label resid="GroupLabel"/>
+                <Control xsi:type="Button" id="appointmentOpenPaneButton">
+                  <Label resid="TaskpaneButton.Label"/>
+                  <Supertip>
+                    <Title resid="TaskpaneButton.Label"/>
+                    <Description resid="TaskpaneButton.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="Taskpane.Url"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.16x16" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://addin.innovationalofficesolution.com/taskpane.html"/>
+        <bt:Url id="Functions.Url" DefaultValue="https://addin.innovationalofficesolution.com/functions.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="GroupLabel" DefaultValue="Contoso Add-in"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Meeting Option"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Opens a pane displaying all available properties."/>
+      </bt:LongStrings>
+    </Resources>
+    
+    <!-- Use VersionOverrides v1.1 for Event-based activation -->
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+      <Requirements>
+        <bt:Sets>
+          <bt:Set Name="Mailbox" MinVersion="1.5" />
+        </bt:Sets>
+      </Requirements>
+      
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <DesktopFormFactor>
+            <FunctionFile resid="Functions.Url"/>
+            
+            <!-- Command surface for appointments -->
+            <ExtensionPoint xsi:type="AppointmentOrganizerCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="appointmentGroup">
+                  <Label resid="GroupLabel"/>
+                  <Control xsi:type="Button" id="appointmentOpenPaneButton">
+                    <Label resid="TaskpaneButton.Label"/>
+                    <Supertip>
+                      <Title resid="TaskpaneButton.Label"/>
+                      <Description resid="TaskpaneButton.Tooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="Icon.16x16"/>
+                      <bt:Image size="32" resid="Icon.32x32"/>
+                      <bt:Image size="80" resid="Icon.80x80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="Taskpane.Url"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+            
+            <!-- LaunchEvent based activation for appointments -->
+            <ExtensionPoint xsi:type="LaunchEvent">
+              <LaunchEvents>
+                <LaunchEvent Type="OnAppointmentSend" FunctionName="onSending" SendMode="PromptUser" />
+                <LaunchEvent Type="OnAppointmentTimeChanged" FunctionName="onItemOpen" />
+              </LaunchEvents>
+              <SourceLocation resid="Functions.Url"/>
+            </ExtensionPoint>
+          </DesktopFormFactor>
+        </Host>
+      </Hosts>
+
+      <Resources>
+        <bt:Images>
+          <bt:Image id="Icon.16x16" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+          <bt:Image id="Icon.32x32" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+          <bt:Image id="Icon.80x80" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+        </bt:Images>
+        <bt:Urls>
+          <bt:Url id="Taskpane.Url" DefaultValue="https://addin.innovationalofficesolution.com/taskpane.html"/>
+          <bt:Url id="Functions.Url" DefaultValue="https://addin.innovationalofficesolution.com/functions.html"/>
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="GroupLabel" DefaultValue="Contoso Add-in"/>
+          <bt:String id="TaskpaneButton.Label" DefaultValue="Meeting Option"/>
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Opens a pane displaying all available properties."/>
+        </bt:LongStrings>
+      </Resources>
+    </VersionOverrides>
+  </VersionOverrides>
+</OfficeApp>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xsi:type="MailApp">
+
+  <Id>0e071610-8222-42c9-87b2-a8a783632adb</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>innovationalofficesolution</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Meeting Management Tool"/>
+  <Description DefaultValue="Manage meeting options and settings in Outlook."/>
+  <IconUrl DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl128.png"/>
+  <SupportUrl DefaultValue="https://www.innovationalofficesolution.com"/>
+
+  <AppDomains>
+    <AppDomain>https://addin.innovationalofficesolution.com</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+
+  <Requirements>
+    <Sets DefaultMinVersion="1.1">
+      <Set Name="Mailbox" MinVersion="1.8"/>
+    </Sets>
+  </Requirements>
+
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://addin.innovationalofficesolution.com/taskpane.html"/>
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+
+  <Permissions>ReadWriteItem</Permissions>
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+    <Rule xsi:type="ItemIs" ItemType="Appointment" FormType="Read"/>
+  </Rule>
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+
+  <!-- V1.0 container -->
+  <VersionOverrides
+    xmlns="http://schemas.microsoft.com/office/mailappversionoverrides"
+    xsi:type="VersionOverridesV1_0">
+
+    <!-- Nested V1.1 override for commands, events, and SSO -->
+    <VersionOverrides
+      xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1"
+      xsi:type="VersionOverridesV1_1">
+
+      <!-- Command surface for appointments -->
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <DesktopFormFactor>
+            <FunctionFile resid="Functions.Url"/>
+            <ExtensionPoint xsi:type="AppointmentOrganizerCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="appointmentGroup">
+                  <Label resid="GroupLabel"/>
+                  <Control xsi:type="Button" id="appointmentOpenPaneButton">
+                    <Label resid="TaskpaneButton.Label"/>
+                    <Supertip>
+                      <Title resid="TaskpaneButton.Label"/>
+                      <Description resid="TaskpaneButton.Tooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="Icon.16x16"/>
+                      <bt:Image size="32" resid="Icon.32x32"/>
+                      <bt:Image size="80" resid="Icon.80x80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="Taskpane.Url"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+
+            <!-- Event-based activation -->
+            <ExtensionPoint xsi:type="LaunchEvent">
+              <LaunchEvents>
+                <LaunchEvent Type="OnAppointmentSend" FunctionName="onSending" SendMode="PromptUser"/>
+                <LaunchEvent Type="OnAppointmentTimeChanged" FunctionName="onItemOpen"/>
+              </LaunchEvents>
+              <SourceLocation resid="Functions.Url"/>
+            </ExtensionPoint>
+          </DesktopFormFactor>
+        </Host>
+      </Hosts>
+
+      <!-- Resources (localized strings, images, URLs) -->
+      <Resources>
+        <bt:Images>
+          <bt:Image id="Icon.16x16" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+          <bt:Image id="Icon.32x32" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+          <bt:Image id="Icon.80x80" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+        </bt:Images>
+        <bt:Urls>
+          <bt:Url id="Taskpane.Url" DefaultValue="https://addin.innovationalofficesolution.com/taskpane.html"/>
+          <bt:Url id="Functions.Url" DefaultValue="https://addin.innovationalofficesolution.com/functions.html"/>
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="GroupLabel" DefaultValue="Meeting Management Tool"/>
+          <bt:String id="TaskpaneButton.Label" DefaultValue="Meeting Options"/>
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Opens the Meeting Options pane."/>
+        </bt:LongStrings>
+      </Resources>
+
+      <!-- SSO configuration for Centralized Deployment -->
+      <WebApplicationInfo>
+        <Id>46006a21-36a1-44cd-a75a-1965799fcdd8</Id>
+        <Resource>api://addin.innovationalofficesolution.com/46006a21-36a1-44cd-a75a-1965799fcdd8</Resource>
+        <Scopes>
+          <Scope>openid</Scope>
+          <Scope>profile</Scope>
+          <Scope>offline_access</Scope>
+        </Scopes>
+      </WebApplicationInfo>
+
+    </VersionOverrides>
+  </VersionOverrides>
+
+</OfficeApp>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xsi:type="MailApp">
+
+  <Id>0e071610-8222-42c9-87b2-a8a783632adb</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>innovationalofficesolution</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Meeting Management Tool" />
+  <Description DefaultValue="A tool to manage meeting options and settings in Outlook." />
+  <IconUrl DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl128.png"/>
+  <SupportUrl DefaultValue="https://www.innovationalofficesolution.com"/>
+
+  <AppDomains>
+    <AppDomain>https://addin.innovationalofficesolution.com</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+
+  <Requirements>
+    <Sets DefaultMinVersion="1.1">
+      <Set Name="Mailbox" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://addin.innovationalofficesolution.com/taskpane.html"/>
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+
+  <Permissions>ReadWriteItem</Permissions>
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+    <Rule xsi:type="ItemIs" ItemType="Appointment" FormType="Read"/>
+  </Rule>
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+
+  <!-- VersionOverrides v1.0 root override -->
+  <VersionOverrides
+    xmlns="http://schemas.microsoft.com/office/mailappversionoverrides"
+    xsi:type="VersionOverridesV1_0">
+
+    <Requirements>
+      <bt:Sets>
+        <bt:Set Name="Mailbox" MinVersion="1.5"/>
+      </bt:Sets>
+    </Requirements>
+
+    <Hosts>
+      <Host xsi:type="MailHost">
+        <DesktopFormFactor>
+          <FunctionFile resid="Functions.Url"/>
+          <!-- Command surface for appointments -->
+          <ExtensionPoint xsi:type="AppointmentOrganizerCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="appointmentGroup">
+                <Label resid="GroupLabel"/>
+                <Control xsi:type="Button" id="appointmentOpenPaneButton">
+                  <Label resid="TaskpaneButton.Label"/>
+                  <Supertip>
+                    <Title resid="TaskpaneButton.Label"/>
+                    <Description resid="TaskpaneButton.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="Taskpane.Url"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.16x16" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://addin.innovationalofficesolution.com/taskpane.html"/>
+        <bt:Url id="Functions.Url" DefaultValue="https://addin.innovationalofficesolution.com/functions.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="GroupLabel" DefaultValue="Contoso Add-in"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Meeting Option"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Opens a pane displaying all available properties."/>
+      </bt:LongStrings>
+    </Resources>
+
+    <!-- Nested VersionOverrides v1.1 for event-based activation and SSO -->
+    <VersionOverrides
+      xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1"
+      xsi:type="VersionOverridesV1_1">
+
+      <Requirements>
+        <bt:Sets>
+          <bt:Set Name="Mailbox" MinVersion="1.5"/>
+        </bt:Sets>
+      </Requirements>
+
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <DesktopFormFactor>
+            <FunctionFile resid="Functions.Url"/>
+            <!-- Same command surface as v1.0 -->
+            <ExtensionPoint xsi:type="AppointmentOrganizerCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="appointmentGroup">
+                  <Label resid="GroupLabel"/>
+                  <Control xsi:type="Button" id="appointmentOpenPaneButton">
+                    <Label resid="TaskpaneButton.Label"/>
+                    <Supertip>
+                      <Title resid="TaskpaneButton.Label"/>
+                      <Description resid="TaskpaneButton.Tooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="Icon.16x16"/>
+                      <bt:Image size="32" resid="Icon.32x32"/>
+                      <bt:Image size="80" resid="Icon.80x80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="Taskpane.Url"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+            <!-- Event-based activation -->
+            <ExtensionPoint xsi:type="LaunchEvent">
+              <LaunchEvents>
+                <LaunchEvent Type="OnAppointmentSend" FunctionName="onSending" SendMode="PromptUser"/>
+                <LaunchEvent Type="OnAppointmentTimeChanged" FunctionName="onItemOpen"/>
+              </LaunchEvents>
+              <SourceLocation resid="Functions.Url"/>
+            </ExtensionPoint>
+          </DesktopFormFactor>
+        </Host>
+      </Hosts>
+
+      <Resources>
+        <bt:Images>
+          <bt:Image id="Icon.16x16" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+          <bt:Image id="Icon.32x32" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+          <bt:Image id="Icon.80x80" DefaultValue="https://addin.innovationalofficesolution.com/images/dfpcl.png"/>
+        </bt:Images>
+        <bt:Urls>
+          <bt:Url id="Taskpane.Url" DefaultValue="https://addin.innovationalofficesolution.com/taskpane.html"/>
+          <bt:Url id="Functions.Url" DefaultValue="https://addin.innovationalofficesolution.com/functions.html"/>
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="GroupLabel" DefaultValue="Contoso Add-in"/>
+          <bt:String id="TaskpaneButton.Label" DefaultValue="Meeting Option"/>
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Opens a pane displaying all available properties."/>
+        </bt:LongStrings>
+      </Resources>
+
+      <!-- Updated WebApplicationInfo for proper SSO configuration -->
+      <WebApplicationInfo>
+        <Id>46006a21-36a1-44cd-a75a-1965799fcdd8</Id>
+        <Resource>api://addin.innovationalofficesolution.com/46006a21-36a1-44cd-a75a-1965799fcdd8</Resource>
+        <Scopes>
+          <Scope>openid</Scope>
+          <Scope>profile</Scope>
+          <Scope>offline_access</Scope>
+        </Scopes>
+      </WebApplicationInfo>
+
+    </VersionOverrides>
+
+  </VersionOverrides>
+
+</OfficeApp>
