@@ -171,8 +171,8 @@ function sendMeetingData(forceRefresh = false) {
   }
   sessionStorage.setItem("hasSentData", "true");
 
-//   const url = "https://dfmmt-b0enaqg6eyg9ewfv.centralindia-01.azurewebsites.net/save-meeting/";
-  const url = "https://add-in-gvbvabchhdf6h3ez.centralindia-01.azurewebsites.net/save-meeting/";
+  const url = "https://dfmmt-b0enaqg6eyg9ewfv.centralindia-01.azurewebsites.net/save-meeting/";
+  // const url = "https://add-in-gvbvabchhdf6h3ez.centralindia-01.azurewebsites.net/save-meeting/";
   const payload = {
     organizer:       meetingData.organizer,
     organizer_email: meetingData.organizer,
