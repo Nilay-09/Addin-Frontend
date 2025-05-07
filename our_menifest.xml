@@ -7,13 +7,13 @@
 
   <!-- Add-in Metadata -->
   <Id>0e071610-8222-42c9-87b2-a8a783632adb</Id>
-  <Version>1.0.0.0</Version>
+  <Version>1.0.0.1</Version>
   <ProviderName>innovationalofficesolution</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="LatestMMT"/>
   <Description DefaultValue="A tool to manage meeting options and settings in Outlook."/>
-  <IconUrl DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/images/dfpcl64.png"/>
-  <HighResolutionIconUrl DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/images/dfpcl128.png"/>
+  <IconUrl DefaultValue="https://polite-water-042c9ad00.6.azurestaticapps.net/images/dfpcl64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://polite-water-042c9ad00.6.azurestaticapps.net/images/dfpcl128.png"/>
   <SupportUrl DefaultValue="https://www.innovationalofficesolution.com"/>
 
   <AppDomains>
@@ -33,7 +33,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/taskpane.html"/>
+        <SourceLocation DefaultValue="https://polite-water-042c9ad00.6.azurestaticapps.net/taskpane.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -108,15 +108,15 @@
       <!-- Shared resources -->
       <Resources>
         <bt:Images>
-          <bt:Image id="Icon.16x16" DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/images/dfpcl.png"/>
-          <bt:Image id="Icon.32x32" DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/images/dfpcl.png"/>
-          <bt:Image id="Icon.80x80" DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/images/dfpcl.png"/>
+          <bt:Image id="Icon.16x16" DefaultValue="https://polite-water-042c9ad00.6.azurestaticapps.net/images/dfpcl.png"/>
+          <bt:Image id="Icon.32x32" DefaultValue="https://polite-water-042c9ad00.6.azurestaticapps.net/images/dfpcl.png"/>
+          <bt:Image id="Icon.80x80" DefaultValue="https://polite-water-042c9ad00.6.azurestaticapps.net/images/dfpcl.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="Functions.Url" DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/functions.html"/>
-          <bt:Url id="Taskpane.Url" DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/taskpane.html"/>
-          <bt:Url id="WebViewRuntime.Url" DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/functions.html"/>
-          <bt:Url id="JSRuntime.Url" DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/functions.js"/>
+          <bt:Url id="Functions.Url" DefaultValue="https://polite-water-042c9ad00.6.azurestaticapps.net/functions.html"/>
+          <bt:Url id="Taskpane.Url" DefaultValue="https://polite-water-042c9ad00.6.azurestaticapps.net/taskpane.html"/>
+          <bt:Url id="WebViewRuntime.Url" DefaultValue="https://polite-water-042c9ad00.6.azurestaticapps.net/functions.html"/>
+          <bt:Url id="JSRuntime.Url" DefaultValue="https://polite-water-042c9ad00.6.azurestaticapps.net/functions.js"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="GroupLabel" DefaultValue="Meeting Add-in"/>
