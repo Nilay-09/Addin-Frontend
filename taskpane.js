@@ -195,6 +195,7 @@ function sendMeetingData(forceRefresh = false) {
       console.log("✅ Data queued via sendBeacon");
       return Promise.resolve();
     }
+    console.log(payload,"payload");
     console.warn("⚠️ sendBeacon failed, using fetch fallback");
     return fetch(url, {
       method:      'POST',

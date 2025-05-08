@@ -10,7 +10,7 @@
   <Version>1.0.0.0</Version>
   <ProviderName>innovationalofficesolution</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="LatestMMT"/>
+  <DisplayName DefaultValue="OuMMT"/>
   <Description DefaultValue="A tool to manage meeting options and settings in Outlook."/>
   <IconUrl DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/images/dfpcl64.png"/>
   <HighResolutionIconUrl DefaultValue="https://calm-dune-06d2c3f1e.6.azurestaticapps.net/images/dfpcl128.png"/>
