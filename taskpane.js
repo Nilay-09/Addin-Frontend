@@ -193,6 +193,7 @@ function sendMeetingData(forceRefresh = false) {
     const beaconOk = navigator.sendBeacon(url, blob);
     if (beaconOk) {
       console.log("✅ Data queued via sendBeacon");
+      console.log("📤 Payload:", payload);
       return Promise.resolve();
     }
     console.warn("⚠️ sendBeacon failed, using fetch fallback");
